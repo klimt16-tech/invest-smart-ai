@@ -110,7 +110,7 @@ export const mockSeries: Record<Period, SeriesPoint[]> = {
     72,
     60,
     (i) =>
-      ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][i],
+      ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][i] ?? "",
   ),
   Histórico: build(20, 1200, 235, 130, (i) => `T${(i % 4) + 1} ${2021 + Math.floor(i / 4)}`),
 };
