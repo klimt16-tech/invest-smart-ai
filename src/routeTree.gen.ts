@@ -10,11 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AsistentesRouteImport } from './routes/asistentes'
+import { Route as CarteraRouteImport } from './routes/cartera'
 import { Route as ConfiguracionRouteImport } from './routes/configuracion'
+import { Route as TradingRouteImport } from './routes/trading'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AsistentesRoute = AsistentesRouteImport.update({
+  id: '/asistentes',
+  path: '/asistentes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarteraRoute = CarteraRouteImport.update({
+  id: '/cartera',
+  path: '/cartera',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConfiguracionRoute = ConfiguracionRouteImport.update({
@@ -22,31 +35,54 @@ const ConfiguracionRoute = ConfiguracionRouteImport.update({
   path: '/configuracion',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TradingRoute = TradingRouteImport.update({
+  id: '/trading',
+  path: '/trading',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/asistentes': typeof AsistentesRoute
+  '/cartera': typeof CarteraRoute
   '/configuracion': typeof ConfiguracionRoute
+  '/trading': typeof TradingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/asistentes': typeof AsistentesRoute
+  '/cartera': typeof CarteraRoute
   '/configuracion': typeof ConfiguracionRoute
+  '/trading': typeof TradingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/asistentes': typeof AsistentesRoute
+  '/cartera': typeof CarteraRoute
   '/configuracion': typeof ConfiguracionRoute
+  '/trading': typeof TradingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/configuracion'
+  fullPaths: '/' | '/asistentes' | '/cartera' | '/configuracion' | '/trading'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/configuracion'
-  id: '__root__' | '/' | '/configuracion'
+  to: '/' | '/asistentes' | '/cartera' | '/configuracion' | '/trading'
+  id:
+    | '__root__'
+    | '/'
+    | '/asistentes'
+    | '/cartera'
+    | '/configuracion'
+    | '/trading'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AsistentesRoute: typeof AsistentesRoute
+  CarteraRoute: typeof CarteraRoute
   ConfiguracionRoute: typeof ConfiguracionRoute
+  TradingRoute: typeof TradingRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,6 +94,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/asistentes': {
+      id: '/asistentes'
+      path: '/asistentes'
+      fullPath: '/asistentes'
+      preLoaderRoute: typeof AsistentesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cartera': {
+      id: '/cartera'
+      path: '/cartera'
+      fullPath: '/cartera'
+      preLoaderRoute: typeof CarteraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/configuracion': {
       id: '/configuracion'
       path: '/configuracion'
@@ -65,12 +115,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConfiguracionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/trading': {
+      id: '/trading'
+      path: '/trading'
+      fullPath: '/trading'
+      preLoaderRoute: typeof TradingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AsistentesRoute: AsistentesRoute,
+  CarteraRoute: CarteraRoute,
   ConfiguracionRoute: ConfiguracionRoute,
+  TradingRoute: TradingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
