@@ -10,11 +10,23 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AsistentesRouteImport } from './routes/asistentes'
+import { Route as CarteraRouteImport } from './routes/cartera'
 import { Route as ConfiguracionRouteImport } from './routes/configuracion'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AsistentesRoute = AsistentesRouteImport.update({
+  id: '/asistentes',
+  path: '/asistentes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarteraRoute = CarteraRouteImport.update({
+  id: '/cartera',
+  path: '/cartera',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConfiguracionRoute = ConfiguracionRouteImport.update({
@@ -25,27 +37,35 @@ const ConfiguracionRoute = ConfiguracionRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/asistentes': typeof AsistentesRoute
+  '/cartera': typeof CarteraRoute
   '/configuracion': typeof ConfiguracionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/asistentes': typeof AsistentesRoute
+  '/cartera': typeof CarteraRoute
   '/configuracion': typeof ConfiguracionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/asistentes': typeof AsistentesRoute
+  '/cartera': typeof CarteraRoute
   '/configuracion': typeof ConfiguracionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/configuracion'
+  fullPaths: '/' | '/asistentes' | '/cartera' | '/configuracion'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/configuracion'
-  id: '__root__' | '/' | '/configuracion'
+  to: '/' | '/asistentes' | '/cartera' | '/configuracion'
+  id: '__root__' | '/' | '/asistentes' | '/cartera' | '/configuracion'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AsistentesRoute: typeof AsistentesRoute
+  CarteraRoute: typeof CarteraRoute
   ConfiguracionRoute: typeof ConfiguracionRoute
 }
 
@@ -56,6 +76,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/asistentes': {
+      id: '/asistentes'
+      path: '/asistentes'
+      fullPath: '/asistentes'
+      preLoaderRoute: typeof AsistentesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cartera': {
+      id: '/cartera'
+      path: '/cartera'
+      fullPath: '/cartera'
+      preLoaderRoute: typeof CarteraRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/configuracion': {
@@ -70,6 +104,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AsistentesRoute: AsistentesRoute,
+  CarteraRoute: CarteraRoute,
   ConfiguracionRoute: ConfiguracionRoute,
 }
 export const routeTree = rootRouteImport

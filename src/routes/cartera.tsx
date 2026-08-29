@@ -47,6 +47,8 @@ export const Route = createFileRoute("/cartera")({
 const TIPOS: AssetType[] = ["Fondo", "ETF", "Acción", "Oro", "Efectivo"];
 const SUBCARTERAS = ["Cartera Ahorro", "Cartera Indie", "Dividendos", "Oro", "Otros"];
 
+type FormErrors = Partial<Record<"nombre" | "ticker" | "cantidad" | "precioMedio" | "precioActual", string>>;
+
 type SortKey = keyof Pick<
   PositionComputed,
   "nombre" | "tipo" | "cantidad" | "precioMedio" | "precioActual" | "valorActual" | "pnl" | "rentabilidad" | "peso"
@@ -86,7 +88,7 @@ function Cartera() {
     precioActual: "",
     subcartera: "Otros",
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -111,7 +113,7 @@ function Cartera() {
   }
 
   function validate() {
-    const e: Record<string, string> = {};
+    const e: FormErrors = {};
     if (!form.nombre.trim()) e.nombre = "El nombre es obligatorio";
     if (!form.ticker.trim()) e.ticker = "Indica el ISIN o ticker";
     if (!form.cantidad || Number(form.cantidad) <= 0) e.cantidad = "Cantidad mayor que 0";
@@ -381,7 +383,7 @@ function Cartera() {
   );
 }
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function Field({ label, error, children }: { label: string; error?: string | undefined; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
       <Label className="text-xs">{label}</Label>
