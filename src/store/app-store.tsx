@@ -20,7 +20,12 @@ interface AppState {
   toggleNotification: (key: keyof NotificationSettings) => void;
 }
 
-const Ctx = createContext<AppState | null>(null);
+// Se guarda en globalThis para evitar que el code-splitting cree dos
+// instancias distintas del contexto (provider en un chunk, consumidor en otro).
+const globalKey = "__invest_ia_app_store_ctx__";
+const globalRef = globalThis as unknown as Record<string, unknown>;
+const Ctx = (globalRef[globalKey] as React.Context<AppState | null>) ??
+  (globalRef[globalKey] = createContext<AppState | null>(null));
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
   const [positions, setPositions] = useState<Position[]>(mockPositions);
