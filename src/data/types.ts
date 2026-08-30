@@ -77,3 +77,24 @@ export interface NotificationSettings {
   email: boolean;
   push: boolean;
 }
+
+export type DataMode = "DEMO" | "REAL";
+
+export type MovimientoTipo =
+  | "Aportación"
+  | "Retirada"
+  | "Compra"
+  | "Venta"
+  | "Dividendo"
+  | "Comisión"
+  | "Otro";
+
+export interface Movimiento {
+  id: string;
+  fecha: string;
+  tipo: MovimientoTipo;
+  activo: string;
+  cantidad: number | null;
+  precio: number | null;
+  importe: number;
+}
