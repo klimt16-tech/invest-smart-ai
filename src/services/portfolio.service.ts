@@ -34,19 +34,37 @@ export function computePositions(positions: Position[]): PositionComputed[] {
   });
 }
 
-export function portfolioSummary(rows: PositionComputed[]) {
+export function portfolioSummary(rows: PositionComputed[], movimientos?: Movimiento[]) {
   const patrimonio = rows.reduce((a, r) => a + r.valorActual, 0);
   const coste = rows.reduce((a, r) => a + r.coste, 0);
   const pnl = patrimonio - coste;
+  const rentabilidad = coste ? (pnl / coste) * 100 : 0;
+
+  // Modo REAL: las cifras se derivan de los movimientos importados, nunca de mock data.
+  if (movimientos) {
+    const suma = (tipos: string[]) =>
+      movimientos.filter((m) => tipos.includes(m.tipo)).reduce((a, m) => a + Math.abs(m.importe), 0);
+    const aportaciones = suma(["Aportación"]) - suma(["Retirada"]);
+    return {
+      patrimonio,
+      coste,
+      pnl,
+      rentabilidad,
+      aportaciones,
+      beneficios: pnl + suma(["Dividendo"]) - suma(["Comisión"]),
+    };
+  }
+
   return {
     patrimonio,
     coste,
     pnl,
-    rentabilidad: coste ? (pnl / coste) * 100 : 0,
+    rentabilidad,
     aportaciones: portfolioService.getAportaciones(),
     beneficios: portfolioService.getBeneficiosAcumulados(),
   };
 }
+
 
 export function allocationByType(rows: PositionComputed[]) {
   const map = new Map<string, number>();
