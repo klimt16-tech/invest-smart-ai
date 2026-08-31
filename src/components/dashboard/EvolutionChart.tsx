@@ -34,8 +34,14 @@ export function EvolutionChart() {
   const [period, setPeriod] = useState<Period>("1M");
   const [data, setData] = useState<SeriesPoint[]>([]);
   const [loading, setLoading] = useState(true);
+  const { mode } = useAppStore();
 
   useEffect(() => {
+    if (mode === "REAL") {
+      setData([]);
+      setLoading(false);
+      return;
+    }
     let alive = true;
     setLoading(true);
     portfolioService.getSeries(period).then((d) => {
@@ -46,15 +52,18 @@ export function EvolutionChart() {
     return () => {
       alive = false;
     };
-  }, [period]);
+  }, [period, mode]);
 
   return (
     <section className="panel p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold">Evolución del patrimonio</h2>
-          <p className="text-xs text-muted-foreground">Datos simulados · periodo {period}</p>
+          <p className="text-xs text-muted-foreground">
+            {mode === "REAL" ? "Datos reales · sin histórico todavía" : `Datos simulados · periodo ${period}`}
+          </p>
         </div>
+
         <div className="flex gap-1 rounded-lg bg-surface-2 p-1">
           {PERIODS.map((p) => (
             <button
