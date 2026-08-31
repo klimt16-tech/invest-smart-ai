@@ -25,6 +25,8 @@ import {
 import { eur, pct, signedEur, toneClass } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { mockImportPreview } from "@/data/mock";
+import { parseMyInvestorFile, type ImportResult } from "@/lib/import-myinvestor";
+
 import type { AssetType, PositionComputed } from "@/data/types";
 import { usePortfolio, useAppStore } from "@/store/app-store";
 
