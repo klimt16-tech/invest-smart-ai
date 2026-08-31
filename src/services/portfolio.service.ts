@@ -4,7 +4,7 @@
  * funciones por llamadas a Supabase / API de mercado / broker.
  */
 import { mockAportaciones, mockBeneficiosAcumulados, mockPositions, mockSeries } from "@/data/mock";
-import type { Period, Position, PositionComputed, SeriesPoint, SubPortfolio } from "@/data/types";
+import type { Movimiento, Period, Position, PositionComputed, SeriesPoint, SubPortfolio } from "@/data/types";
 
 export const portfolioService = {
   async getPositions(): Promise<Position[]> {
