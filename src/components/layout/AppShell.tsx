@@ -81,11 +81,16 @@ export function AppShell({
           })}
         </nav>
         <div className="mt-auto rounded-xl border border-border bg-surface-2 p-3 text-xs text-muted-foreground">
-          <p className="font-semibold text-warning">MODO DEMO</p>
+          <p className={cn("font-semibold", mode === "DEMO" ? "text-warning" : "text-positive")}>
+            MODO {mode}
+          </p>
           <p className="mt-1">
-            Datos ficticios. Sin cuentas bancarias, brokers ni operaciones reales.
+            {mode === "DEMO"
+              ? "Datos ficticios. Sin cuentas bancarias, brokers ni operaciones reales."
+              : "Tu cartera real guardada en este dispositivo. Nunca se piden credenciales ni se ejecutan órdenes."}
           </p>
         </div>
+
       </aside>
 
       <div className="lg:pl-64">
