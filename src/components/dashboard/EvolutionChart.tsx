@@ -71,8 +71,9 @@ export function EvolutionChart() {
             <button
               key={p}
               onClick={() => setPeriod(p)}
+              disabled={mode === "REAL"}
               className={cn(
-                "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                "rounded-md px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-40",
                 period === p
                   ? "bg-primary/20 text-primary"
                   : "text-muted-foreground hover:text-foreground",
@@ -87,7 +88,17 @@ export function EvolutionChart() {
       <div className="mt-4 h-64">
         {loading ? (
           <Skeleton className="h-full w-full" />
+        ) : data.length === 0 ? (
+          <div className="grid h-full place-items-center rounded-lg border border-dashed border-border px-6 text-center">
+            <div>
+              <p className="text-sm font-medium">Sin histórico disponible</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                El histórico real se irá construyendo con tus importaciones y precios de mercado.
+              </p>
+            </div>
+          </div>
         ) : (
+
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
               <defs>
