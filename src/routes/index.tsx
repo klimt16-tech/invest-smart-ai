@@ -149,9 +149,17 @@ function Dashboard() {
             <p className="mt-1 text-sm text-muted-foreground">{meta.text}</p>
           </div>
         </div>
-        <span className="rounded-full border border-warning/40 bg-warning/10 px-3 py-1 text-xs font-semibold text-warning">
-          MODO DEMO
+        <span
+          className={cn(
+            "rounded-full border px-3 py-1 text-xs font-semibold",
+            isReal
+              ? "border-positive/40 bg-positive/10 text-positive"
+              : "border-warning/40 bg-warning/10 text-warning",
+          )}
+        >
+          MODO {mode}
         </span>
+
       </section>
     </AppShell>
   );
