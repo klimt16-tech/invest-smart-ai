@@ -119,7 +119,8 @@ function Dashboard() {
       </div>
 
       <section className="mt-4">
-        <h2 className="mb-3 text-sm font-semibold">Subcarteras MyInvestor</h2>
+        <h2 className="mb-3 text-sm font-semibold">{isReal ? "Subcarteras" : "Subcarteras MyInvestor"}</h2>
+
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           {subs.map((s) => {
             const Icon = s.tendencia === "up" ? ArrowUpRight : s.tendencia === "down" ? ArrowDownRight : Minus;
