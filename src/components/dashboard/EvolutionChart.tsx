@@ -12,7 +12,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { eur, pct } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { portfolioService } from "@/services/portfolio.service";
+import { useAppStore } from "@/store/app-store";
 import type { Period, SeriesPoint } from "@/data/types";
+
 
 const PERIODS: Period[] = ["1D", "1M", "1A", "Histórico"];
 
@@ -34,8 +36,14 @@ export function EvolutionChart() {
   const [period, setPeriod] = useState<Period>("1M");
   const [data, setData] = useState<SeriesPoint[]>([]);
   const [loading, setLoading] = useState(true);
+  const { mode } = useAppStore();
 
   useEffect(() => {
+    if (mode === "REAL") {
+      setData([]);
+      setLoading(false);
+      return;
+    }
     let alive = true;
     setLoading(true);
     portfolioService.getSeries(period).then((d) => {
@@ -46,22 +54,26 @@ export function EvolutionChart() {
     return () => {
       alive = false;
     };
-  }, [period]);
+  }, [period, mode]);
 
   return (
     <section className="panel p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-sm font-semibold">Evolución del patrimonio</h2>
-          <p className="text-xs text-muted-foreground">Datos simulados · periodo {period}</p>
+          <p className="text-xs text-muted-foreground">
+            {mode === "REAL" ? "Datos reales · sin histórico todavía" : `Datos simulados · periodo ${period}`}
+          </p>
         </div>
+
         <div className="flex gap-1 rounded-lg bg-surface-2 p-1">
           {PERIODS.map((p) => (
             <button
               key={p}
               onClick={() => setPeriod(p)}
+              disabled={mode === "REAL"}
               className={cn(
-                "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                "rounded-md px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-40",
                 period === p
                   ? "bg-primary/20 text-primary"
                   : "text-muted-foreground hover:text-foreground",
@@ -76,7 +88,17 @@ export function EvolutionChart() {
       <div className="mt-4 h-64">
         {loading ? (
           <Skeleton className="h-full w-full" />
+        ) : data.length === 0 ? (
+          <div className="grid h-full place-items-center rounded-lg border border-dashed border-border px-6 text-center">
+            <div>
+              <p className="text-sm font-medium">Sin histórico disponible</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                El histórico real se irá construyendo con tus importaciones y precios de mercado.
+              </p>
+            </div>
+          </div>
         ) : (
+
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
               <defs>

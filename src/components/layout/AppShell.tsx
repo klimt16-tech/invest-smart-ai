@@ -11,6 +11,9 @@ import {
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { StatusSelector } from "@/components/common/StatusSelector";
+import { ModeSelector } from "@/components/common/ModeSelector";
+import { useAppStore } from "@/store/app-store";
+
 
 interface NavItem {
   to: string;
@@ -50,6 +53,8 @@ export function AppShell({
   children: ReactNode;
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { mode } = useAppStore();
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -76,11 +81,16 @@ export function AppShell({
           })}
         </nav>
         <div className="mt-auto rounded-xl border border-border bg-surface-2 p-3 text-xs text-muted-foreground">
-          <p className="font-semibold text-warning">MODO DEMO</p>
+          <p className={cn("font-semibold", mode === "DEMO" ? "text-warning" : "text-positive")}>
+            MODO {mode}
+          </p>
           <p className="mt-1">
-            Datos ficticios. Sin cuentas bancarias, brokers ni operaciones reales.
+            {mode === "DEMO"
+              ? "Datos ficticios. Sin cuentas bancarias, brokers ni operaciones reales."
+              : "Tu cartera real guardada en este dispositivo. Nunca se piden credenciales ni se ejecutan órdenes."}
           </p>
         </div>
+
       </aside>
 
       <div className="lg:pl-64">
@@ -94,7 +104,9 @@ export function AppShell({
               {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
             </div>
             <div className="flex items-center gap-2">
+              <ModeSelector />
               <StatusSelector />
+
               <Link
                 to="/configuracion"
                 aria-label="Configuración"
