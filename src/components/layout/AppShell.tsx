@@ -104,7 +104,9 @@ export function AppShell({
               {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
             </div>
             <div className="flex items-center gap-2">
+              <ModeSelector />
               <StatusSelector />
+
               <Link
                 to="/configuracion"
                 aria-label="Configuración"
