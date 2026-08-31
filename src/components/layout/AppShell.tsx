@@ -11,6 +11,9 @@ import {
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { StatusSelector } from "@/components/common/StatusSelector";
+import { ModeSelector } from "@/components/common/ModeSelector";
+import { useAppStore } from "@/store/app-store";
+
 
 interface NavItem {
   to: string;
