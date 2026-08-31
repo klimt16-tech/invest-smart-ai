@@ -12,7 +12,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { eur, pct } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { portfolioService } from "@/services/portfolio.service";
+import { useAppStore } from "@/store/app-store";
 import type { Period, SeriesPoint } from "@/data/types";
+
 
 const PERIODS: Period[] = ["1D", "1M", "1A", "Histórico"];
 
