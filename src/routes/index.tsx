@@ -31,11 +31,38 @@ export const Route = createFileRoute("/")({
 
 function Dashboard() {
   const rows = usePortfolio();
-  const { status } = useAppStore();
-  const summary = portfolioSummary(rows);
+  const { status, mode, movimientos, loadingReal } = useAppStore();
+  const isReal = mode === "REAL";
+  const summary = portfolioSummary(rows, isReal ? movimientos : undefined);
   const allocation = allocationByType(rows);
   const subs = subPortfolios(rows);
   const meta = statusMeta[status];
+  const vacio = isReal && rows.length === 0;
+
+  if (vacio) {
+    return (
+      <AppShell title="Dashboard" subtitle="Modo REAL · sin datos de cartera todavía">
+        <section className="panel grid place-items-center p-10 text-center">
+          <Wallet className="size-8 text-primary" />
+          <h2 className="mt-4 text-base font-semibold">Tu cartera real está vacía</h2>
+          <p className="mt-2 max-w-md text-sm text-muted-foreground">
+            {loadingReal
+              ? "Cargando tus datos guardados…"
+              : "No se muestra ninguna cifra estimada ni ficticia. Importa el archivo exportado por tu banco o añade posiciones manualmente para empezar."}
+          </p>
+          <Link
+            to="/cartera"
+            className="mt-5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+          >
+            Ir a Mi Cartera
+          </Link>
+          <p className="mt-4 text-xs text-muted-foreground">
+            ¿Solo quieres explorar la app? Cambia a modo DEMO en la cabecera.
+          </p>
+        </section>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell title="Dashboard" subtitle="Resumen general de tu patrimonio">
@@ -53,10 +80,16 @@ function Dashboard() {
           value={signedEur(summary.beneficios)}
           icon={Coins}
           tone="positive"
-          hint="Desde el inicio"
+          hint={isReal ? "Calculado con tus movimientos" : "Desde el inicio"}
         />
-        <StatCard label="Aportaciones" value={eur(summary.aportaciones)} icon={PiggyBank} hint="Capital aportado" />
+        <StatCard
+          label="Aportaciones"
+          value={isReal && summary.aportaciones === 0 ? "Sin datos" : eur(summary.aportaciones)}
+          icon={PiggyBank}
+          hint={isReal ? "Importa movimientos para calcularlo" : "Capital aportado"}
+        />
       </div>
+
 
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">
