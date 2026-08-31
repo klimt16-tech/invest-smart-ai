@@ -53,6 +53,8 @@ export function AppShell({
   children: ReactNode;
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { mode } = useAppStore();
+
 
   return (
     <div className="min-h-screen bg-background">
