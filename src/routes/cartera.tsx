@@ -146,7 +146,45 @@ function Cartera() {
     setOpen(false);
   }
 
+  async function handleFile(file: File) {
+    setFileName(file.name);
+    setParseError("");
+    if (!isReal) {
+      setImported(true);
+      return;
+    }
+    setParsing(true);
+    setParsed(null);
+    try {
+      const result = await parseMyInvestorFile(file);
+      setParsed(result);
+      setImported(true);
+    } catch (err) {
+      setImported(false);
+      setParseError(err instanceof Error ? err.message : "No se ha podido leer el archivo.");
+    } finally {
+      setParsing(false);
+    }
+  }
+
+  function resetImport() {
+    setImported(false);
+    setFileName("");
+    setParsed(null);
+    setParseError("");
+  }
+
   function confirmImport() {
+    if (isReal) {
+      if (!parsed) return;
+      importPositions(parsed.positions, parsed.movimientos);
+      toast.success("Importación completada", {
+        description: `${parsed.positions.length} posiciones y ${parsed.movimientos.length} movimientos guardados`,
+      });
+      resetImport();
+      setOpen(false);
+      return;
+    }
     importPositions(
       mockImportPreview.map((p) => ({
         nombre: `${p.nombre} (importado)`,
@@ -159,10 +197,10 @@ function Cartera() {
       })),
     );
     toast.success("Importación simulada completada", { description: `${mockImportPreview.length} posiciones añadidas` });
-    setImported(false);
-    setFileName("");
+    resetImport();
     setOpen(false);
   }
+
 
   return (
     <AppShell title="Mi Cartera" subtitle="Posiciones, rentabilidad y peso por activo">
