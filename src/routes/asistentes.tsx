@@ -42,9 +42,22 @@ function Asistentes() {
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const rows = usePortfolio();
+  const { mode, movimientos } = useAppStore();
+  const summary = portfolioSummary(rows, mode === "REAL" ? movimientos : undefined);
+  const aiContext = {
+    mode,
+    patrimonio: summary.patrimonio,
+    pnl: summary.pnl,
+    rentabilidad: summary.rentabilidad,
+    posiciones: [...rows]
+      .sort((a, b) => b.valorActual - a.valorActual)
+      .map((r) => ({ nombre: r.nombre, tipo: r.tipo, valor: r.valorActual, peso: r.peso })),
+  };
 
   const active = aiService.getAssistant(activeId);
   const messages = history[activeId] ?? [];
+
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
