@@ -70,7 +70,8 @@ const COLUMNS: { key: SortKey; label: string; align: "left" | "right" }[] = [
 
 function Cartera() {
   const rows = usePortfolio();
-  const { addPosition, importPositions } = useAppStore();
+  const { addPosition, importPositions, mode, clearReal } = useAppStore();
+  const isReal = mode === "REAL";
   const [query, setQuery] = useState("");
   const [tipo, setTipo] = useState<string>("todos");
   const [sort, setSort] = useState<{ key: SortKey; dir: "asc" | "desc" }>({
@@ -80,6 +81,10 @@ function Cartera() {
   const [open, setOpen] = useState(false);
   const [imported, setImported] = useState(false);
   const [fileName, setFileName] = useState("");
+  const [parsed, setParsed] = useState<ImportResult | null>(null);
+  const [parsing, setParsing] = useState(false);
+  const [parseError, setParseError] = useState("");
+
 
   const [form, setForm] = useState({
     nombre: "",
