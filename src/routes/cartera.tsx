@@ -70,7 +70,8 @@ const COLUMNS: { key: SortKey; label: string; align: "left" | "right" }[] = [
 
 function Cartera() {
   const rows = usePortfolio();
-  const { addPosition, importPositions } = useAppStore();
+  const { addPosition, importPositions, mode } = useAppStore();
+  const isReal = mode === "REAL";
   const [query, setQuery] = useState("");
   const [tipo, setTipo] = useState<string>("todos");
   const [sort, setSort] = useState<{ key: SortKey; dir: "asc" | "desc" }>({
@@ -80,6 +81,10 @@ function Cartera() {
   const [open, setOpen] = useState(false);
   const [imported, setImported] = useState(false);
   const [fileName, setFileName] = useState("");
+  const [parsed, setParsed] = useState<ImportResult | null>(null);
+  const [parsing, setParsing] = useState(false);
+  const [parseError, setParseError] = useState("");
+
 
   const [form, setForm] = useState({
     nombre: "",
@@ -141,7 +146,45 @@ function Cartera() {
     setOpen(false);
   }
 
+  async function handleFile(file: File) {
+    setFileName(file.name);
+    setParseError("");
+    if (!isReal) {
+      setImported(true);
+      return;
+    }
+    setParsing(true);
+    setParsed(null);
+    try {
+      const result = await parseMyInvestorFile(file);
+      setParsed(result);
+      setImported(true);
+    } catch (err) {
+      setImported(false);
+      setParseError(err instanceof Error ? err.message : "No se ha podido leer el archivo.");
+    } finally {
+      setParsing(false);
+    }
+  }
+
+  function resetImport() {
+    setImported(false);
+    setFileName("");
+    setParsed(null);
+    setParseError("");
+  }
+
   function confirmImport() {
+    if (isReal) {
+      if (!parsed) return;
+      importPositions(parsed.positions, parsed.movimientos);
+      toast.success("Importación completada", {
+        description: `${parsed.positions.length} posiciones y ${parsed.movimientos.length} movimientos guardados`,
+      });
+      resetImport();
+      setOpen(false);
+      return;
+    }
     importPositions(
       mockImportPreview.map((p) => ({
         nombre: `${p.nombre} (importado)`,
@@ -154,10 +197,10 @@ function Cartera() {
       })),
     );
     toast.success("Importación simulada completada", { description: `${mockImportPreview.length} posiciones añadidas` });
-    setImported(false);
-    setFileName("");
+    resetImport();
     setOpen(false);
   }
+
 
   return (
     <AppShell title="Mi Cartera" subtitle="Posiciones, rentabilidad y peso por activo">
@@ -268,10 +311,17 @@ function Cartera() {
 
         {filtered.length === 0 && (
           <div className="py-14 text-center">
-            <p className="text-sm font-medium">Sin resultados</p>
-            <p className="mt-1 text-xs text-muted-foreground">Prueba con otro término o cambia el filtro de tipo.</p>
+            <p className="text-sm font-medium">
+              {isReal && rows.length === 0 ? "Tu cartera real está vacía" : "Sin resultados"}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {isReal && rows.length === 0
+                ? "Importa el CSV/XLSX exportado por tu banco o añade posiciones manualmente."
+                : "Prueba con otro término o cambia el filtro de tipo."}
+            </p>
           </div>
         )}
+
       </section>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -279,7 +329,9 @@ function Cartera() {
           <DialogHeader>
             <DialogTitle>Importar / Actualizar Datos</DialogTitle>
             <DialogDescription>
-              Importación simulada en modo demo. No se conecta con ningún banco ni broker.
+              {isReal
+                ? "Sube el archivo CSV/XLSX exportado por tu banco o bróker. Nunca se piden usuario, contraseña ni credenciales."
+                : "Importación simulada en modo demo. No se conecta con ningún banco ni broker."}
             </DialogDescription>
           </DialogHeader>
 
@@ -301,13 +353,43 @@ function Cartera() {
                   onChange={(e) => {
                     const f = e.target.files?.[0];
                     if (!f) return;
-                    setFileName(f.name);
-                    setImported(true);
+                    void handleFile(f);
                   }}
                 />
               </label>
 
-              {imported && (
+              {parsing && <p className="text-xs text-muted-foreground">Leyendo archivo…</p>}
+              {parseError && <p className="text-xs text-negative">{parseError}</p>}
+
+              {imported && isReal && parsed && (
+                <div className="rounded-lg border border-border">
+                  <p className="border-b border-border px-3 py-2 text-xs text-muted-foreground">
+                    <span className="text-foreground">{fileName}</span> · {parsed.positions.length} posiciones ·{" "}
+                    {parsed.movimientos.length} movimientos
+                  </p>
+                  <div className="max-h-56 overflow-auto">
+                    <table className="w-full text-xs">
+                      <tbody>
+                        {parsed.positions.slice(0, 20).map((p, i) => (
+                          <tr key={`${p.nombre}-${i}`} className="border-b border-border/50 last:border-0">
+                            <td className="px-3 py-2">{p.nombre}</td>
+                            <td className="px-3 py-2 text-muted-foreground">{p.tipo}</td>
+                            <td className="num px-3 py-2 text-right">{p.cantidad}</td>
+                            <td className="num px-3 py-2 text-right">{eur(p.precioActual)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {parsed.avisos.length > 0 && (
+                    <p className="border-t border-border px-3 py-2 text-xs text-warning">
+                      {parsed.avisos.join(" · ")}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {imported && !isReal && (
                 <div className="rounded-lg border border-border">
                   <p className="border-b border-border px-3 py-2 text-xs text-muted-foreground">
                     Previsualización de <span className="text-foreground">{fileName}</span>
@@ -330,6 +412,7 @@ function Cartera() {
               <DialogFooter>
                 <Button variant="secondary" onClick={() => setOpen(false)}>
                   Cancelar
+
                 </Button>
                 <Button disabled={!imported} onClick={confirmImport}>
                   Confirmar importación
