@@ -14,7 +14,105 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      allocation_targets: {
+        Row: {
+          categoria: string
+          created_at: string
+          id: string
+          objetivo: number
+          user_id: string
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          id?: string
+          objetivo?: number
+          user_id: string
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          id?: string
+          objetivo?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      movements: {
+        Row: {
+          activo: string
+          cantidad: number | null
+          created_at: string
+          fecha: string
+          id: string
+          importe: number
+          precio: number | null
+          tipo: string
+          user_id: string
+        }
+        Insert: {
+          activo?: string
+          cantidad?: number | null
+          created_at?: string
+          fecha?: string
+          id?: string
+          importe?: number
+          precio?: number | null
+          tipo: string
+          user_id: string
+        }
+        Update: {
+          activo?: string
+          cantidad?: number | null
+          created_at?: string
+          fecha?: string
+          id?: string
+          importe?: number
+          precio?: number | null
+          tipo?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      positions: {
+        Row: {
+          cantidad: number
+          created_at: string
+          id: string
+          nombre: string
+          precio_actual: number
+          precio_medio: number
+          subcartera: string
+          ticker: string
+          tipo: string
+          user_id: string
+        }
+        Insert: {
+          cantidad?: number
+          created_at?: string
+          id?: string
+          nombre: string
+          precio_actual?: number
+          precio_medio?: number
+          subcartera?: string
+          ticker?: string
+          tipo?: string
+          user_id: string
+        }
+        Update: {
+          cantidad?: number
+          created_at?: string
+          id?: string
+          nombre?: string
+          precio_actual?: number
+          precio_medio?: number
+          subcartera?: string
+          ticker?: string
+          tipo?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
