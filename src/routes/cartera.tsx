@@ -311,10 +311,17 @@ function Cartera() {
 
         {filtered.length === 0 && (
           <div className="py-14 text-center">
-            <p className="text-sm font-medium">Sin resultados</p>
-            <p className="mt-1 text-xs text-muted-foreground">Prueba con otro término o cambia el filtro de tipo.</p>
+            <p className="text-sm font-medium">
+              {isReal && rows.length === 0 ? "Tu cartera real está vacía" : "Sin resultados"}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {isReal && rows.length === 0
+                ? "Importa el CSV/XLSX exportado por tu banco o añade posiciones manualmente."
+                : "Prueba con otro término o cambia el filtro de tipo."}
+            </p>
           </div>
         )}
+
       </section>
 
       <Dialog open={open} onOpenChange={setOpen}>
