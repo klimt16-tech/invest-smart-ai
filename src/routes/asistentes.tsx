@@ -80,7 +80,7 @@ function Asistentes() {
     setHistory((h) => ({ ...h, [activeId]: [...(h[activeId] ?? []), userMsg] }));
     setInput("");
     setThinking(true);
-    const reply = await aiService.ask(activeId, text, turn);
+    const reply = await aiService.ask(activeId, text, turn, aiContext);
     setHistory((h) => ({
       ...h,
       [activeId]: [
