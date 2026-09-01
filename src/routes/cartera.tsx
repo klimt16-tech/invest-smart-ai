@@ -381,9 +381,9 @@ function Cartera() {
                       </tbody>
                     </table>
                   </div>
-                  {parsed.warnings.length > 0 && (
+                  {parsed.avisos.length > 0 && (
                     <p className="border-t border-border px-3 py-2 text-xs text-warning">
-                      {parsed.warnings.join(" · ")}
+                      {parsed.avisos.join(" · ")}
                     </p>
                   )}
                 </div>
