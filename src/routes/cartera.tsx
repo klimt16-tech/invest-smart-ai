@@ -70,7 +70,7 @@ const COLUMNS: { key: SortKey; label: string; align: "left" | "right" }[] = [
 
 function Cartera() {
   const rows = usePortfolio();
-  const { addPosition, importPositions, mode, clearReal } = useAppStore();
+  const { addPosition, importPositions, mode } = useAppStore();
   const isReal = mode === "REAL";
   const [query, setQuery] = useState("");
   const [tipo, setTipo] = useState<string>("todos");
