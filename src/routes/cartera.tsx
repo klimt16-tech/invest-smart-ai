@@ -329,7 +329,9 @@ function Cartera() {
           <DialogHeader>
             <DialogTitle>Importar / Actualizar Datos</DialogTitle>
             <DialogDescription>
-              Importación simulada en modo demo. No se conecta con ningún banco ni broker.
+              {isReal
+                ? "Sube el archivo CSV/XLSX exportado por tu banco o bróker. Nunca se piden usuario, contraseña ni credenciales."
+                : "Importación simulada en modo demo. No se conecta con ningún banco ni broker."}
             </DialogDescription>
           </DialogHeader>
 
@@ -351,13 +353,43 @@ function Cartera() {
                   onChange={(e) => {
                     const f = e.target.files?.[0];
                     if (!f) return;
-                    setFileName(f.name);
-                    setImported(true);
+                    void handleFile(f);
                   }}
                 />
               </label>
 
-              {imported && (
+              {parsing && <p className="text-xs text-muted-foreground">Leyendo archivo…</p>}
+              {parseError && <p className="text-xs text-negative">{parseError}</p>}
+
+              {imported && isReal && parsed && (
+                <div className="rounded-lg border border-border">
+                  <p className="border-b border-border px-3 py-2 text-xs text-muted-foreground">
+                    <span className="text-foreground">{fileName}</span> · {parsed.positions.length} posiciones ·{" "}
+                    {parsed.movimientos.length} movimientos
+                  </p>
+                  <div className="max-h-56 overflow-auto">
+                    <table className="w-full text-xs">
+                      <tbody>
+                        {parsed.positions.slice(0, 20).map((p, i) => (
+                          <tr key={`${p.nombre}-${i}`} className="border-b border-border/50 last:border-0">
+                            <td className="px-3 py-2">{p.nombre}</td>
+                            <td className="px-3 py-2 text-muted-foreground">{p.tipo}</td>
+                            <td className="num px-3 py-2 text-right">{p.cantidad}</td>
+                            <td className="num px-3 py-2 text-right">{eur(p.precioActual)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {parsed.warnings.length > 0 && (
+                    <p className="border-t border-border px-3 py-2 text-xs text-warning">
+                      {parsed.warnings.join(" · ")}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {imported && !isReal && (
                 <div className="rounded-lg border border-border">
                   <p className="border-b border-border px-3 py-2 text-xs text-muted-foreground">
                     Previsualización de <span className="text-foreground">{fileName}</span>
@@ -380,6 +412,7 @@ function Cartera() {
               <DialogFooter>
                 <Button variant="secondary" onClick={() => setOpen(false)}>
                   Cancelar
+
                 </Button>
                 <Button disabled={!imported} onClick={confirmImport}>
                   Confirmar importación
