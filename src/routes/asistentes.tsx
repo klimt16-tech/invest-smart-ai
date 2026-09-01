@@ -6,7 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { aiService } from "@/services/ai.service";
+import { portfolioSummary } from "@/services/portfolio.service";
+import { usePortfolio, useAppStore } from "@/store/app-store";
 import type { ChatMessage } from "@/data/types";
+
 
 export const Route = createFileRoute("/asistentes")({
   head: () => ({
